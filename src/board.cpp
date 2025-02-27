@@ -74,7 +74,7 @@ Move Move::fromUci(const std::string& uci) {
 }
 
 // Constructor for Board
-Board::Board() {
+Board::Board() : _chess960(false) {
     reset();
 }
 
@@ -478,13 +478,36 @@ bool Board::setFromFen(const std::string& fen) {
     // Parse castling rights
     _castlingRights = 0;
     if (castling != "-") {
-        for (char c : castling) {
-            switch (c) {
+        if (_chess960) {
+            // In Chess960, castling rights are denoted by the files of the rooks
+            for (char c : castling) {
+                if (c >= 'A' && c <= 'H') {
+                    // Uppercase letters for white's rooks
+                    int rookFile = c - 'A';
+                    //_castlingRights |= (rookFile < _kingFile[WHITE] ? WHITE_OOO : WHITE_OO);
+                    _castlingRights |= NO_CASTLING;
+                }
+                else if (c >= 'a' && c <= 'h') {
+                    // Lowercase letters for black's rooks
+                    int rookFile = c - 'a';
+                    //_castlingRights |= (rookFile < _kingFile[BLACK] ? BLACK_OOO : BLACK_OO);
+                    _castlingRights |= NO_CASTLING;
+                }
+                else {
+                    return false; // Invalid castling right
+                }
+            }
+        }
+        else {
+            // Standard chess notation
+            for (char c : castling) {
+                switch (c) {
                 case 'K': _castlingRights |= WHITE_OO; break;
                 case 'Q': _castlingRights |= WHITE_OOO; break;
                 case 'k': _castlingRights |= BLACK_OO; break;
                 case 'q': _castlingRights |= BLACK_OOO; break;
                 default: return false; // Invalid castling right
+                }
             }
         }
     }

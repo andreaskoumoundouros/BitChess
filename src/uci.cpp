@@ -28,6 +28,8 @@ void UCI::processCommand(const std::string& command) {
     
     if (token == "uci") {
         handleUci();
+    } else if (token == "setoption") {
+        handleSetOption(is);
     } else if (token == "isready") {
         handleIsReady();
     } else if (token == "position") {
@@ -40,6 +42,8 @@ void UCI::processCommand(const std::string& command) {
         handleQuit();
     } else if (token == "ucinewgame") {
         handleUciNewGame();
+    } else if (token == "printboard") {
+        handlePrintBoard();
     }
 }
 
@@ -49,8 +53,39 @@ void UCI::handleUci() {
     
     // Send UCI options here if needed
     // sendResponse("option name Hash type spin default 64 min 1 max 1024");
+    sendResponse("option name UCI_Chess960 type check default false");
     
     sendResponse("uciok");
+}
+
+void UCI::handleSetOption(std::istringstream& is) {
+    std::string name, id;
+
+    is >> name >> id;
+
+    // Validating setoption command
+    if (name != "name") {
+        return;
+    }
+
+    std::cout << "Handling: " << id << "\n";
+
+    if (id == "UCI_Chess960") {
+        // Handle Chess960 mode
+        std::string value, data;
+        is >> value >> data;
+        if (value != "value") {
+            return;
+        }
+
+        if (data == "false") {
+           _board._chess960 = false;
+        }
+        else if (data == "true")
+        {
+            _board._chess960 = true;
+        }
+    }
 }
 
 void UCI::handleIsReady() {
@@ -125,6 +160,10 @@ void UCI::handleUciNewGame() {
     // Reset the board and engine for a new game
     _board.reset();
     _engine.setPosition(_board);
+}
+
+void UCI::handlePrintBoard() {
+    sendResponse(_board.toString());
 }
 
 void UCI::applyMoves(const std::string& moveStr) {

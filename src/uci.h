@@ -30,6 +30,10 @@ private:
     
     // Handle the 'uci' command
     void handleUci();
+
+    void handleSetOption(std::istringstream& is);
+
+    void handlePrintBoard();
     
     // Handle the 'isready' command
     void handleIsReady();

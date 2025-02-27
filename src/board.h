@@ -123,6 +123,9 @@ public:
     
     // Fullmove number
     int _fullmoveNumber;
+
+    // Chess960 mode
+    bool _chess960;
     
     // Helper method to find the king square for a given color
     Square findKing(Color color) const;
