@@ -21,8 +21,8 @@ A chess engine designed to use reinforcement learning, built with a bitboard rep
 
 ```bash
 # Clone the repository
-git clone https://github.com/andreaskoumoundouros/bitchess-rl.git
-cd bitchess-rl
+git clone https://github.com/andreaskoumoundouros/BitChess.git
+cd BitChess
 
 # Create build directory
 mkdir build && cd build
