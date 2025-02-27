@@ -14,7 +14,7 @@ A chess engine designed to use reinforcement learning, built with a bitboard rep
 ### Prerequisites
 
 - C++17 compatible compiler
-- CMake 3.14 or higher
+- CMake 3.15 or higher
 - GoogleTest for running tests (automatically downloaded by CMake)
 
 ### Build Instructions
