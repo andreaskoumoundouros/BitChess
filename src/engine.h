@@ -29,11 +29,18 @@ public:
     
     // Default move selection strategies
     static Move randomMove(const std::vector<Move>& legalMoves, const Board& board);
+
+	// Add after the randomMove declaration:
+	static Move weightedRandomMove(const std::vector<Move>& legalMoves, const Board& board);
     
     // Future: Add strategy that uses RL model
     // static Move modelBasedMove(const std::vector<Move>& legalMoves, const Board& board);
     
 private:
+	
+    // Add this helper function to evaluate move weights
+	static int evaluateMoveWeight(const Move& move, const Board& board);
+
     // Current board position
     Board _board;
     
