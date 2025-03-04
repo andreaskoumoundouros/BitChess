@@ -54,6 +54,10 @@ void UCI::handleUci() {
     // Send UCI options here if needed
     // sendResponse("option name Hash type spin default 64 min 1 max 1024");
     sendResponse("option name UCI_Chess960 type check default false");
+
+#ifdef ENABLE_RL
+    sendResponse("option name UseRL type check default true");
+#endif
     
     sendResponse("uciok");
 }
@@ -86,6 +90,23 @@ void UCI::handleSetOption(std::istringstream& is) {
             _board._chess960 = true;
         }
     }
+#ifdef ENABLE_RL
+    if (id == "UseRL") {
+		std::string value, data;
+		is >> value >> data;
+		if (value != "value") {
+			return;
+		}
+
+		if (data == "false") {
+            _engine.setMoveSelectionStrategy(std::bind(&Engine::weightedRandomMove, std::placeholders::_1, std::placeholders::_2));
+		}
+		else if (data == "true")
+		{
+            _engine.setMoveSelectionStrategy(std::bind(&modelBasedMove, std::placeholders::_1, std::placeholders::_2));
+		}
+    }
+#endif
 }
 
 void UCI::handleIsReady() {

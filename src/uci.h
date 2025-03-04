@@ -6,6 +6,11 @@
 #include <vector>
 #include <sstream>
 
+// Include chess_rl.h only when RL is enabled
+#ifdef ENABLE_RL
+#include "chess_rl.h"
+#endif
+
 // UCI protocol handler
 class UCI {
 public:

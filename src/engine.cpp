@@ -6,7 +6,11 @@
 Engine::Engine() : _rng(std::chrono::system_clock::now().time_since_epoch().count()) {
 	// Set default move selection strategy to random
 	//_moveSelectionStrategy = std::bind(&Engine::randomMove, std::placeholders::_1, std::placeholders::_2);
+#ifdef ENABLE_RL
+	_moveSelectionStrategy = std::bind(&modelBasedMove, std::placeholders::_1, std::placeholders::_2);
+#else
 	_moveSelectionStrategy = std::bind(&Engine::weightedRandomMove, std::placeholders::_1, std::placeholders::_2);
+#endif
 
 	// Initialize board to starting position
 	_board.reset();
@@ -130,39 +134,38 @@ int Engine::evaluateMoveWeight(const Move& move, const Board& board) {
 	{
 		switch (movingPiece)
 		{
-		case KNIGHT:
-			weight += 25;
-			break;
-		case BISHOP:
-			weight += 20;
-			break;
-		case ROOK:
-			weight += 20;
-			break;
-		case QUEEN:
-			weight += 15;
-			break;
-		case PAWN:
+			case KNIGHT:
+				weight += 25;
+				break;
+			case BISHOP:
+				weight += 20;
+				break;
+			case ROOK:
+				weight += 20;
+				break;
+			case QUEEN:
+				weight += 15;
+				break;
+			case PAWN:
 			{
-				// Get current full move number from board
-				int moveNumber = board.fullmoveNumber();
 
 				// Prioritize pawn moves in early game (first ~5 turns)
-				if (moveNumber <= 5) {
+				if (board.fullmoveNumber() <= 5) {
 					// Higher weight for early pawn moves, especially center pawns
-					weight += 50 - (moveNumber * 10); // Decreases from +50 to +10 over 5 moves
+					weight += 50 - (board.fullmoveNumber() * 10); // Decreases from +50 to +10 over 5 moves
 
 					// Additional weight for center pawns (files D and E)
 					File fromFile = BitboardUtils::squareFile(move.from);
 					if (fromFile == FILE_D || fromFile == FILE_E) {
 						weight += 20;
 					}
+				}
 				break;
 			}
-		case NO_PIECE_TYPE:
-			break;
-		default:
-			break;
+			case NO_PIECE_TYPE:
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -184,12 +187,3 @@ int Engine::evaluateMoveWeight(const Move& move, const Board& board) {
 
 	return weight;
 }
-
-// Future implementation for RL-based move selection
-/*
-Move Engine::modelBasedMove(const std::vector<Move>& legalMoves, const Board& board) {
-	// This function will use a reinforcement learning model to select the best move
-	// For now, it would return a random move as a placeholder
-	return randomMove(legalMoves, board);
-}
-*/

@@ -6,6 +6,11 @@
 #include <random>
 #include <functional>
 
+// Include chess_rl.h only when RL is enabled
+#ifdef ENABLE_RL
+#include "chess_rl.h"
+#endif
+
 // Function type for move selection strategy
 using MoveSelectionFunc = std::function<Move(const std::vector<Move>&, const Board&)>;
 
@@ -33,8 +38,6 @@ public:
 	// Add after the randomMove declaration:
 	static Move weightedRandomMove(const std::vector<Move>& legalMoves, const Board& board);
     
-    // Future: Add strategy that uses RL model
-    // static Move modelBasedMove(const std::vector<Move>& legalMoves, const Board& board);
     
 private:
 	
@@ -49,6 +52,7 @@ private:
     
     // Random number generator for random move selection
     std::mt19937 _rng;
+
 };
 
 #endif // ENGINE_H
